@@ -1,21 +1,19 @@
-
-# thesis graphs: Carlander (1955)
+#'
+#' @title Carlander (1955) figure
+#' 
+#' @description Loads data extracted from Carlander (1955) in Hector and Wilby
+#' (2009) and plots the figure.
+#'
 
 # load relevant libraries
-library(dplyr)
-library(tidyr)
 library(ggplot2)
 library(readr)
 
-# set working directory
-setwd("C:/Users/james/OneDrive/PhD_Gothenburg/Thesis_document")
-
 # get the meta_theme()
-source("figures/Function_plotting_theme.R")
+source("code/helper-plotting-theme.R")
 
 # load the Carlander (1955) data
-df <- read_csv(file = "figures/Carlander_1955_data/Fig_X_data.csv",
-               col_names = FALSE)
+df <- readr::read_csv(file = "data/carlander-1955-data.csv", col_names = FALSE)
 print(df)
 
 # check the data
@@ -25,23 +23,26 @@ names(df) <- c("species_richness_ln", "biomass_pound_acre_ln")
 df$species_richness_ln <- round(df$species_richness_ln, 0)
 
 # run a regression on these data
-lm.x <- lm(log(df$biomass_pound_acre_ln) ~ log(df$species_richness_ln))
-summary(lm.x)
+lm_x <- lm(log(df$biomass_pound_acre_ln) ~ log(df$species_richness_ln))
+summary(lm_x)
 
 # extract the relevant data
-lm.x <- summary(lm.x)
-r2 <- round(lm.x$r.squared, 2)
-Fst <- round(lm.x$fstatistic[1], 2)
-df1 <- round(lm.x$fstatistic[2], 0)
-df2 <- round(lm.x$fstatistic[3], 0)
-pval <- round(lm.x$coefficients[2, 4], 2)
+lm_x <- summary(lm_x)
+
+# extract regression diagnostics for plotting
+r2 <- round(lm_x$r.squared, 2)
+Fst <- round(lm_x$fstatistic[1], 2)
+df1 <- round(lm_x$fstatistic[2], 0)
+df2 <- round(lm_x$fstatistic[3], 0)
+pval <- round(lm_x$coefficients[2, 4], 2)
 
 # plot the figure
-ggplot(data = df,
+p1 <- 
+  ggplot(data = df,
        mapping = aes(x = species_richness_ln, y = biomass_pound_acre_ln)) +
-  geom_jitter(width = 0.01) +
-  geom_smooth(method = "lm", colour = "black", size = 0.5, 
-              alpha = 0.25) +
+  geom_jitter(width = 0.01, shape = 1, colour = "red", size = 2) +
+  geom_smooth(method = "lm", size = 0.5, 
+              alpha = 0.1, colour = "red", fill = "red") +
   scale_y_continuous(breaks = c(100, 200, 500, 1000), trans = "log") +
   scale_x_continuous(breaks = c(1, 2, 5, 10, 20), trans = "log") +
   ylab(expression("Biomass pound"~acre^{-1}~"(ln)")) +
@@ -50,11 +51,9 @@ ggplot(data = df,
   annotate(geom = "text", x = 16.55, y = 120, label = bquote(F[.(df1)~","~.(df2)]~" = "~.(Fst) ), size = 3) +
   annotate(geom = "text", x = 14.75, y = 90, label = bquote("P = "~.(pval) ), size = 3) +
   theme_meta()
+plot(p1)
 
-ggsave(filename = "figures/Carlander_1955_data/Fig_X1.png",
-       unit = "cm", width = 10, height = 7.5, dpi = 400)
+ggsave(filename = "figures-tables/fig_1.svg", p1,
+       unit = "cm", width = 10, height = 7.5)
 
-
-
-
-
+### END

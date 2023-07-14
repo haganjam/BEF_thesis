@@ -1,9 +1,6 @@
 
 # Simulate theoretical BEF results (Loreau 2004)
 
-# set working directory
-setwd("C:/Users/james/OneDrive/PhD_Gothenburg/Thesis_document")
-
 # get the meta_theme()
 source("figures/Function_plotting_theme.R")
 
