@@ -15,31 +15,6 @@ library(ggplot2)
 library(tidyr)
 library(ggpubr)
 
-# set-up a function to generate relevant test data
-test_data <- function(S = 1, M1, M2, Y1, Y2) {
-  
-  df1 <- 
-    data.frame(sample = rep(S, 2),
-               species = c(1, 2),
-               M = c(M1, M2),
-               Y = c(Y1, Y2))
-  
-  df2 <- 
-    data.frame(species = as.character(rep(1:2, 4)),
-               mixture = factor(c("Sp.1", "Sp.1", "Sp.2", "Sp.2", "Mix (Exp.)", "Mix (Exp.)", "Mix", "Mix"),
-                                levels = c("Sp.1", "Sp.2", "Mix (Exp.)", "Mix")),
-               yield = c(M1, 0, 0, M2, M1/2, M2/2, Y1, Y2))
-  
-  df3 <- 
-    test1.seg <- data.frame(xstart = unique(df2$mixture),
-                            xend = unique(df2$mixture),
-                            ystart = c(NA, NA, NA, (M1+M2)/2),
-                            yend = c(NA, NA, NA, (Y1+Y2)))
-  
-  return(list(df1, df2, df3))
-  
-}
-
 # generate the first test data.frame
 tst1 <- test_data(S = 1, M1 = 200, M2 = 500, Y1 = 0, Y2 = 500)
 

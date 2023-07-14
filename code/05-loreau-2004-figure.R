@@ -1,8 +1,12 @@
+#'
+#' @title Theoretical results from Loreau (2004)
+#' 
+#' @description Uses the Lotka-Volterra model from Loreau (2004) to reproduce
+#' the basic theoretical results consistently reported in the BEF literature
+#'
 
-# Simulate theoretical BEF results (Loreau 2004)
-
-# get the meta_theme()
-source("figures/Function_plotting_theme.R")
+# load relevant scripts
+source("code/helper-plotting-theme.R")
 
 # load relevant libraries
 library(dplyr)
@@ -78,38 +82,32 @@ BEF_df <-
     
   }
   
-  
-  
   return(df)
   
 } )
 
 # bind this into a data.frame
-BEF_df <- bind_rows(BEF_df, .id = "ID")
+BEF_df <- dplyr::bind_rows(BEF_df, .id = "ID")
 head(BEF_df)
 
 BEF_df <- 
-  BEF_df %>%
-  rename(`Transgressive overyielding` = TOY)
+  BEF_df |>
+  dplyr::rename(`Transgressive overyielding` = TOY)
 
 # check for any negative relationships
 ID_in <- 
-  BEF_df %>%
-  group_by(ID, SR) %>%
-  summarise(mean_EF = mean(EF)) %>%
-  summarise(diff_EF = diff(mean_EF)) %>%
-  filter(diff_EF < 0) %>%
-  pull(ID)
-
-BEF_df %>%
-  filter(ID %in% ID_in) %>%
-  View()
+  BEF_df |>
+  dplyr::group_by(ID, SR) |>
+  dplyr::summarise(mean_EF = mean(EF)) |>
+  dplyr::summarise(diff_EF = diff(mean_EF)) |>
+  dplyr::filter(diff_EF < 0) |>
+  dplyr::pull(ID)
 
 # make a plot of this result for stable coexistence
 df_plot1 <- 
-  BEF_df %>% 
-  filter(coex == TRUE) %>%
-  filter(ID %in% sample(unique(ID), 30))
+  BEF_df |>
+  dplyr::filter(coex == TRUE) |>
+  dplyr::filter(ID %in% sample(unique(ID), 30))
 
 p1 <- 
   ggplot() +
@@ -131,9 +129,9 @@ plot(p1)
 
 # make a plot of this result for unstable coexistence
 df_plot2 <- 
-  BEF_df %>% 
-  filter(coex == FALSE) %>%
-  filter(ID %in% sample(unique(ID), 30))
+  BEF_df |>
+  dplyr::filter(coex == FALSE) |>
+  dplyr::filter(ID %in% sample(unique(ID), 30))
 
 p2 <- 
   ggplot() +
@@ -158,5 +156,7 @@ plot(p2)
 p12 <- ggarrange(p1, p2, common.legend = TRUE, labels = c("a", "b"),
                  font.label = list(size = 11, face = "plain"))
 
-ggsave(filename = "figures/Loreau_2004/Fig_1_loreau_2004.png", plot = p12,
-       unit = "cm", width = 20, height = 9.5, dpi = 400)
+ggsave(filename = "figures-tables/fig_7.svg", plot = p12,
+       unit = "cm", width = 20, height = 9.5)
+
+### END
