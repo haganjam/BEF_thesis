@@ -1,16 +1,17 @@
+#'
+#' @title Schmid (2002) figure
+#' 
+#' @description Generates an example of the figure that Schmid (2002) presented
+#' in his summary article about the BEF relationship and how it applies to 
+#' experimental and non-experimental systems
+#'
 
-# reproduce Figs from Schmid 2002
-
-# set working directory
-setwd("C:/Users/james/OneDrive/PhD_Gothenburg/Thesis_document")
-
-# get the meta_theme()
-source("figures/Function_plotting_theme.R")
+# load relevant functions
+source("code/helper-plotting-theme.R")
 
 # load relevant libraries
 library(dplyr)
 library(ggplot2)
-library(tidyr)
 library(ggpubr)
 
 # generate a hump-shaped curve
@@ -19,24 +20,24 @@ y <- (5.5*x) - (0.55*(x^2))
 plot(x, y)
 
 # pull into a data.frame
-df <- data.frame(prod = x, div = y)
-print(df)
+sch_dat <- data.frame(prod = x, div = y)
+print(sch_dat)
 
 # generate a few random points under the curve
-df$div_raw <- round(runif(n = nrow(df), min = 0+0.25, max = df$div-0.25), 0)
+sch_dat$div_raw <- round(runif(n = nrow(sch_dat), min = 0+0.25, max = sch_dat$div-0.25), 0)
 
-# randomly sample 30
-df[sample(x = 1:nrow(df), 40), ]$div_raw <- NA
+# randomly sample 40
+sch_dat[sample(x = 1:nrow(sch_dat), 40), ]$div_raw <- NA
 
 # check the summary statistics of df
-summary(df)
+summary(sch_dat)
 
 # plot the graph
 p1 <- 
   ggplot() +
-  geom_point(data = df, 
-             mapping = aes(x = prod, y = div_raw)) +
-  geom_line(data = df,
+  geom_point(data = sch_dat, 
+             mapping = aes(x = prod, y = div_raw), size = 2, shape = 1, colour = "red") +
+  geom_line(data = sch_dat,
             mapping = aes(x = prod, y = div), 
             size = 0.75,colour = "red", linetype = "dashed") +
   ylab("Species richness") +
@@ -45,6 +46,7 @@ p1 <-
   theme_meta() +
   theme(axis.text.x = element_text(colour = "white", size = 1),
         axis.text.y = element_text(colour = "white", size = 1))
+plot(p1)
 
 # plot the sideways version
 
@@ -56,23 +58,23 @@ x <- seq(-0.1, 5.7, 0.1)
 dfB <- data.frame(prod = x, div = 1.6^(x)-1)
 
 # get the end poitns
-dfAB <- bind_rows(dfA[dfA$div == max(dfA$div),], dfB[dfB$div == max(dfB$div),])
+dfAB <- dplyr::bind_rows(dfA[dfA$div == max(dfA$div),], dfB[dfB$div == max(dfB$div),])
 dfAB$point <- c("A", "B")
 
 p2 <- 
   ggplot() +
-  geom_line(data = df,
+  geom_line(data = sch_dat,
             mapping = aes(x = prod, y = div), 
             size = 0.75,colour = "red", linetype = "dashed") +
   geom_line(data = dfA,
-            mapping = aes(x = prod, y = div)) +
+            mapping = aes(x = prod, y = div), colour = "red") +
   geom_line(data = dfB,
-            mapping = aes(x = prod, y = div)) +
+            mapping = aes(x = prod, y = div), colour = "red") +
   geom_point(data = dfAB, 
-             mapping = aes(x = prod, y = div), size = 3) +
+             mapping = aes(x = prod, y = div), size = 3, colour = "red") +
   geom_text(data = dfAB, 
              mapping = aes(x = prod, y = div, label = point), size =4,
-             nudge_y = 0.65, nudge_x = 0.5) +
+             nudge_y = 0.65, nudge_x = 0.5, colour = "red") +
   scale_y_continuous(limits = c(0, 14.5)) +
   ylab("Species richness") +
   xlab("Productivity") +
@@ -80,6 +82,7 @@ p2 <-
   theme_meta() +
   theme(axis.text.x = element_text(colour = "white", size = 1),
         axis.text.y = element_text(colour = "white", size = 1))
+plot(p2)
 
 p12 <- 
   ggarrange(p1, p2, widths = c(1.5, 1),
@@ -87,7 +90,7 @@ p12 <-
             font.label = list(size = 11, face = "plain")
             )
 
-ggsave(filename = "figures/Schmid_2002/Fig_Schmid_2002.png", plot = p12,
-       unit = "cm", width = 17, height = 7.5, dpi = 400)
+ggsave(filename = "figures-tables/fig_6.svg", plot = p12,
+       unit = "cm", width = 17, height = 7.5)
 
 ### END
