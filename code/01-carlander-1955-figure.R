@@ -13,17 +13,17 @@ library(readr)
 source("code/helper-plotting-theme.R")
 
 # load the Carlander (1955) data
-df <- readr::read_csv(file = "data/carlander-1955-data.csv", col_names = FALSE)
-print(df)
+car_dat <- readr::read_csv(file = "data/carlander-1955-data.csv", col_names = FALSE)
+print(car_dat)
 
 # check the data
-names(df) <- c("species_richness_ln", "biomass_pound_acre_ln")
+names(car_dat) <- c("species_richness_ln", "biomass_pound_acre_ln")
 
 # round off the species richness variable to a single value
-df$species_richness_ln <- round(df$species_richness_ln, 0)
+car_dat$species_richness_ln <- round(car_dat$species_richness_ln, 0)
 
 # run a regression on these data
-lm_x <- lm(log(df$biomass_pound_acre_ln) ~ log(df$species_richness_ln))
+lm_x <- lm(log(car_dat$biomass_pound_acre_ln) ~ log(car_dat$species_richness_ln))
 summary(lm_x)
 
 # extract the relevant data
@@ -38,7 +38,7 @@ pval <- round(lm_x$coefficients[2, 4], 2)
 
 # plot the figure
 p1 <- 
-  ggplot(data = df,
+  ggplot(data = car_dat,
        mapping = aes(x = species_richness_ln, y = biomass_pound_acre_ln)) +
   geom_jitter(width = 0.01, shape = 1, colour = "red", size = 2) +
   geom_smooth(method = "lm", size = 0.5, 
