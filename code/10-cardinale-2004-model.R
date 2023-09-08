@@ -154,27 +154,62 @@ lbi_patch <-
                    real_SR = sum(abundance > 0),
                    total_abun = sum(abundance)) 
 
+# get maximum monoculture
+pm <- max(lbi_patch[lbi_patch$init_SR == 1, ]$total_abun)
+
 # plot the BEF relationship at the patch scale
 ggplot(data = lbi_patch,
        mapping = aes(x = init_SR, y = total_abun)) +
-  geom_point() +
-  geom_smooth()
+  geom_hline(yintercept = pm, linetype = "longdash") +
+  geom_jitter(shape = 1, colour = "red", alpha = 0.2) +
+  geom_smooth(method = "lm", formula=y ~ poly(x, 2, raw=TRUE), 
+              size = 0.25, colour = "black") +
+  xlab("Initial species richness") +
+  ylab("Total abundance") +
+  theme_meta()
 
 # landscape scale summary
 lbi_land <- 
   lbi_df |> 
   dplyr::filter(time == t) |> 
-  dplyr::group_by(landscape) |> 
+  dplyr::group_by(landscape, patch) |>
   dplyr::summarise(init_SR = first(init_SR),
                    real_SR = sum(abundance > 0),
-                   total_abun = sum(abundance)) 
+                   total_abun = sum(abundance)) |>
+  dplyr::group_by(landscape) |>
+  dplyr::summarise(init_SR = first(init_SR),
+                   real_SR_m = mean(real_SR),
+                   real_SR_sd = mean(real_SR),
+                   total_abun_m = mean(total_abun),
+                   total_abun_sd = sd(total_abun)
+                   ) 
+
+# get maximum monoculture
+lm <- max(lbi_land[lbi_land$init_SR == 1, ]$total_abun_m)
+
+# make a factor for plotting
+lbi_land$init_SR_f <- factor(lbi_land$init_SR) 
 
 # plot the BEF relationship at the patch scale
-ggplot(data = lbi_land,
-       mapping = aes(x = init_SR, y = total_abun)) +
-  geom_point() +
-  geom_smooth()
+ggplot() +
+  geom_hline(yintercept = lm, linetype = "longdash") +
+  geom_point(data = lbi_land,
+             mapping = aes(x = init_SR_f, y = total_abun_m), 
+             colour = "red", alpha = 0.25, size = 2,
+             position = position_jitter(width = 0.25, seed = 1234)) +
+  geom_pointrange(data = lbi_land,
+                  mapping = aes(x = init_SR_f, 
+                                y = total_abun_m,
+                                ymin = total_abun_m - total_abun_sd,
+                                ymax = total_abun_m + total_abun_sd),
+                  colour = "red", alpha = 0.2, 
+                  position = position_jitter(width = 0.25, seed = 1234)) +
+  geom_smooth(data = lbi_land,
+              mapping = aes(x = init_SR, y = total_abun_m), 
+              method = "lm", formula=y ~ poly(x, 2, raw=TRUE),
+              size = 0.25, colour = "black") +
+  xlab("Initial species richness") +
+  ylab("Total abundance") +
+  theme_meta()
 
-
-
-
+### END
