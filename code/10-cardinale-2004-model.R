@@ -19,6 +19,9 @@ N <- 20
 # set the number of patches
 P <- 100
 
+# set the number of time steps
+t <- 200
+
 # set species intrinsic growth rates
 r <- seq(log(0.2)-0.1, log(0.2)+0.1, length.out = N)
 print(exp(r))
@@ -45,6 +48,11 @@ a <- matrix(a, nrow = N, ncol = N)
 
 # set-up the starting biomass
 b0 <- 100
+
+# set-up a list with starting abundances
+bi <- vector("list", length = t)
+bi[[1]] <- rep(b0/N, N)
+
 
 # run the simulation
 
