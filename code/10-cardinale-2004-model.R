@@ -6,6 +6,10 @@
 #' relationship
 #'
 
+# next steps are to actually plot curves and then make the figure
+# use the Thompson et al. (2021) model to show the other kind of BEF
+# relationship
+
 # load relevant libraries
 library(dplyr)
 library(ggplot2)
