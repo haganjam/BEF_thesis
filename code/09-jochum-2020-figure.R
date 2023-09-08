@@ -165,7 +165,7 @@ q2 <-
 # combine the two sets of plots
 q12 <- cowplot::plot_grid(q1, q2, nrow = 2, ncol = 1)
 
-ggsave(filename = "figures-tables/fig_Y.pdf", plot = q12,
+ggsave(filename = "figures-tables/fig_8.pdf", plot = q12,
        unit = "cm", width = 20, height = 14)
 
 ### END
