@@ -156,21 +156,42 @@ lbi_patch <-
   dplyr::group_by(landscape, patch) |> 
   dplyr::summarise(init_SR = first(init_SR),
                    real_SR = sum(abundance > 0),
-                   total_abun = sum(abundance)) 
+                   total_abun = sum(abundance)) |> 
+  dplyr::ungroup()
 
 # get maximum monoculture
 pm <- max(lbi_patch[lbi_patch$init_SR == 1, ]$total_abun)
 
+# power function using nls()
+nlm1 <- nls(total_abun ~ a*(init_SR^b), data = lbi_patch, start = list(a = 1 , b = 2))
+
+# make a predicted dataset
+pred_patch <- data.frame(init_SR = seq(0.8, 20, 0.1))
+x <- investr::predFit(nlm1, pred_patch, interval = "confidence")
+pred_patch <- dplyr::bind_cols(pred_patch, x)
+
 # plot the BEF relationship at the patch scale
-ggplot(data = lbi_patch,
-       mapping = aes(x = init_SR, y = total_abun)) +
+y <- 
+  ggplot() +
   geom_hline(yintercept = pm, linetype = "longdash") +
-  geom_jitter(shape = 1, colour = "red", alpha = 0.2) +
-  geom_smooth(method = "lm", formula=y ~ poly(x, 2, raw=TRUE), 
-              size = 0.25, colour = "black") +
+  geom_jitter(data = lbi_patch,
+              mapping = aes(x = init_SR, y = total_abun),
+              colour = "red", alpha = 0.15, width = 0.2) +
+  geom_ribbon(data = pred_patch,
+              mapping = aes(x = init_SR, ymin = lwr, ymax = upr),
+              alpha = 0.2) +
+  geom_line(data = pred_patch,
+            mapping = aes(x = init_SR, y = fit)) +
   xlab("Initial species richness") +
   ylab("Total abundance") +
   theme_meta()
+
+# assign the plot object
+if(case == 1) {
+  assign("p1", y)
+} else {
+  assign("q1", y)
+}
 
 # landscape scale summary
 lbi_land <- 
@@ -186,7 +207,16 @@ lbi_land <-
                    real_SR_sd = mean(real_SR),
                    total_abun_m = mean(total_abun),
                    total_abun_sd = sd(total_abun)
-                   ) 
+                   ) |>
+  dplyr::ungroup()
+
+# power function using nls()
+nlm2 <- nls(total_abun_m ~ a*(init_SR^b), data = lbi_land, start = list(a = 1 , b = 2))
+
+# make a predicted dataset
+pred_land <- data.frame(init_SR = seq(0.8, 20, 0.1))
+x <- investr::predFit(nlm2, pred_land, interval = "confidence")
+pred_land <- dplyr::bind_cols(pred_land, x)
 
 # get maximum monoculture
 lm <- max(lbi_land[lbi_land$init_SR == 1, ]$total_abun_m)
@@ -195,25 +225,43 @@ lm <- max(lbi_land[lbi_land$init_SR == 1, ]$total_abun_m)
 lbi_land$init_SR_f <- factor(lbi_land$init_SR) 
 
 # plot the BEF relationship at the patch scale
-ggplot() +
+y <- 
+  ggplot() +
   geom_hline(yintercept = lm, linetype = "longdash") +
-  geom_point(data = lbi_land,
-             mapping = aes(x = init_SR_f, y = total_abun_m), 
-             colour = "red", alpha = 0.25, size = 2,
-             position = position_jitter(width = 0.25, seed = 1234)) +
-  geom_pointrange(data = lbi_land,
-                  mapping = aes(x = init_SR_f, 
-                                y = total_abun_m,
-                                ymin = total_abun_m - total_abun_sd,
-                                ymax = total_abun_m + total_abun_sd),
-                  colour = "red", alpha = 0.2, 
-                  position = position_jitter(width = 0.25, seed = 1234)) +
-  geom_smooth(data = lbi_land,
-              mapping = aes(x = init_SR, y = total_abun_m), 
-              method = "lm", formula=y ~ poly(x, 2, raw=TRUE),
-              size = 0.25, colour = "black") +
+  geom_jitter(data = lbi_land,
+             mapping = aes(x = init_SR, y = total_abun_m), 
+             colour = "red", alpha = 0.25, size = 2, width = 0.2) +
+  geom_ribbon(data = pred_land,
+              mapping = aes(x = init_SR, ymin = lwr, ymax = upr),
+              alpha = 0.2) +
+  geom_line(data = pred_land,
+            mapping = aes(x = init_SR, y = fit)) +
   xlab("Initial species richness") +
   ylab("Total abundance") +
   theme_meta()
+
+# assign the plot object
+if(case == 1) {
+  assign("p2", y)
+} else {
+  assign("q2", y)
+}
+
+# sort out the axis labels
+p1 <- p1 + xlab(NULL)
+p2 <- p2 + xlab(NULL) + ylab(NULL)
+
+# sort out the axis labels
+q1 <- q1
+q2 <- q2 + ylab(NULL)
+
+# arrange the plot
+pq <-
+  cowplot::plot_grid(p1, p2, q1, q2, align = c("hv"),
+                     nrow = 2, ncol = 2, 
+                     labels = c("d", "e", "f"), label_size = 11,
+                     label_fontface = "plain",
+                     rel_widths = c(1,1.05),
+                     rel_heights = c(1.05, 1))
 
 ### END
