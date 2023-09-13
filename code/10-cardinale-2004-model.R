@@ -6,9 +6,7 @@
 #' relationship
 #'
 
-# next steps are to actually plot curves and then make the figure
-# use the Thompson et al. (2021) model to show the other kind of BEF
-# relationship
+# use the Thompson et al. (2021) model to show the other kind of BEF relationship
 
 # load relevant libraries
 library(dplyr)
@@ -224,7 +222,7 @@ lm <- max(lbi_land[lbi_land$init_SR == 1, ]$total_abun_m)
 # make a factor for plotting
 lbi_land$init_SR_f <- factor(lbi_land$init_SR) 
 
-# plot the BEF relationship at the patch scale
+# plot the BEF relationship at the landscape scale
 y <- 
   ggplot() +
   geom_hline(yintercept = lm, linetype = "longdash") +
@@ -248,20 +246,25 @@ if(case == 1) {
 }
 
 # sort out the axis labels
-p1 <- p1 + xlab(NULL)
-p2 <- p2 + xlab(NULL) + ylab(NULL)
+p1 <- p1 + xlab(NULL) + ylab(NULL)
+p2 <- p2 + ylab(NULL)
 
 # sort out the axis labels
-q1 <- q1
-q2 <- q2 + ylab(NULL)
+q1 <- q1 + xlab(NULL)
+q2 <- q2
 
 # arrange the plot
 pq <-
-  cowplot::plot_grid(p1, p2, q1, q2, align = c("hv"),
+  cowplot::plot_grid(q1, p1, q2, p2, align = c("hv"),
                      nrow = 2, ncol = 2, 
-                     labels = c("d", "e", "f"), label_size = 11,
+                     labels = c("a", "b", "c", "d"), label_size = 11,
                      label_fontface = "plain",
                      rel_widths = c(1,1.05),
                      rel_heights = c(1.05, 1))
+plot(pq)
+
+# export the figure for further modification
+ggsave(filename = "figures-tables/fig_9.pdf", pq,
+       unit = "cm", width = 20, height = 14)
 
 ### END
