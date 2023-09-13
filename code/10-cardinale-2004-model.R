@@ -6,8 +6,6 @@
 #' relationship
 #'
 
-# use the Thompson et al. (2021) model to show the other kind of BEF relationship
-
 # load relevant libraries
 library(dplyr)
 library(ggplot2)
@@ -246,12 +244,16 @@ if(case == 1) {
 }
 
 # sort out the axis labels
-p1 <- p1 + xlab(NULL) + ylab(NULL)
-p2 <- p2 + ylab(NULL)
+if(case == 1) {
+  p1 <- p1 + xlab(NULL) + ylab(NULL)
+  p2 <- p2 + ylab(NULL)
+}
 
 # sort out the axis labels
-q1 <- q1 + xlab(NULL)
-q2 <- q2
+if(case == 2) {
+  q1 <- q1 + xlab(NULL)
+  q2 <- q2
+}
 
 # arrange the plot
 pq <-
