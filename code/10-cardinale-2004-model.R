@@ -6,8 +6,6 @@
 #' relationship
 #'
 
-# new case where we just draw the K-values from a normal distribution
-
 # load relevant libraries
 library(dplyr)
 library(ggplot2)
@@ -19,10 +17,7 @@ source("code/helper-plotting-theme.R")
 N <- 20
 
 # set the number of landscapes
-L <- 100
-
-# set the number of patches within a landscape
-P <- 20
+L <- 2000
 
 # get a vector with the different diversities for each landscape
 divT <- rep(seq(1:N), each = L/N)
@@ -40,13 +35,16 @@ print(exp(r))
 exp(mean(log((r))))
 
 # set the case:
-# 1 - partitioning between patches in a landscape with different landscape types
+# 1 - partitioning between patches in a landscape
 # 2 - partitioning within patches in a landscape
-# 3 - no partitioning within patches in a landscape
+# 3 - no partioning within or between patches in a landscape
 case <- 1
 
 # set the parameters
 if(case == 1) {
+  
+  # how many patches?
+  P <- 20
   
   # set the K values to vary by patch type (Thompson et al. 2021)
   Kmax <- 1000
@@ -72,13 +70,34 @@ if(case == 1) {
   
 } else if (case == 2) {
   
+  # how many patches?
+  
   # set the carrying capacities to be equal
   K <- matrix(rep(200, N*P), nrow = P, ncol = N)
   
   # set alpha as either 1 or 0.2
   a <- c(0.2)
   
-} else {
+} else if (case == 3) {
+  
+  # how many patches
+  P <- 1
+  
+  # set the K parameters
+  Kmax <- 1000
+  sd <- 1.5
+  
+  # define the environment
+  env <- 1:N
+  
+  # define the patch specific K
+  K <- sapply(env, function(x) Kmax*(exp((1-( x ))/(2*(sd)))^2))
+
+  # set the carrying capacities to be equal
+  K <- matrix(K, nrow = P, ncol = N)
+  
+  # set alpha as either 1 or 0.2
+  a <- 1
   
 }
 
@@ -141,6 +160,9 @@ for(l in 1:L) {
   # bind the output into a data.frame
   pbi_df <- dplyr::bind_rows(pbi)
   
+  # extract the final time-point
+  pbi_df <- dplyr::filter(pbi_df, time == t)
+  
   # write into the landscape level output
   lbi[[l]] <- pbi_df 
   
@@ -186,6 +208,7 @@ y <-
   xlab("Initial species richness") +
   ylab("Total abundance") +
   theme_meta()
+plot(y)
 
 # assign the plot object
 if(case == 1) {
@@ -208,7 +231,7 @@ lbi_land <-
                    real_SR_sd = mean(real_SR),
                    total_abun_m = mean(total_abun),
                    total_abun_sd = sd(total_abun)
-                   ) |>
+  ) |>
   dplyr::ungroup()
 
 # power function using nls()
@@ -230,8 +253,8 @@ y <-
   ggplot() +
   geom_hline(yintercept = lm, linetype = "longdash") +
   geom_jitter(data = lbi_land,
-             mapping = aes(x = init_SR, y = total_abun_m), 
-             colour = "red", alpha = 0.25, size = 2, width = 0.2) +
+              mapping = aes(x = init_SR, y = total_abun_m), 
+              colour = "red", alpha = 0.25, size = 2, width = 0.2) +
   geom_ribbon(data = pred_land,
               mapping = aes(x = init_SR, ymin = lwr, ymax = upr),
               alpha = 0.2) +
@@ -249,16 +272,12 @@ if(case == 1) {
 }
 
 # sort out the axis labels
-if(case == 1) {
-  p1 <- p1 + xlab(NULL) + ylab(NULL)
-  p2 <- p2 + ylab(NULL)
-}
+p1 <- p1 + xlab(NULL) + ylab(NULL)
+p2 <- p2 + ylab(NULL)
 
 # sort out the axis labels
-if(case == 2) {
-  q1 <- q1 + xlab(NULL)
-  q2 <- q2
-}
+q1 <- q1 + xlab(NULL)
+q2 <- q2
 
 # arrange the plot
 pq <-
