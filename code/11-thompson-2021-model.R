@@ -18,21 +18,21 @@ source("code/helper-plotting-theme.R")
 # simulate using the mcomsimr models
 mc1 <- 
   simulate_MC(
-  patches = 20,
-  species = 20,
+  patches = 100,
+  species = 50,
   dispersal = 0.01,
   plot = FALSE,
   torus = TRUE,
   kernel_exp = 0.1,
-  env1Scale = 500,
+  env1Scale = 2,
   timesteps = 1200,
   burn_in = 800,
   initialization = 200,
   max_r = 5,
   min_env = 0,
   max_env = 1,
-  env_niche_breadth = 0.5,
-  optima_spacing = "random",
+  env_niche_breadth = 0.3,
+  optima_spacing = "even",
   intra = 1,
   min_inter = 1,
   max_inter = 1,
@@ -55,15 +55,16 @@ patch_df <-
                    alpha_div = sum(N > 0)) |>
   dplyr::ungroup() |>
   dplyr::filter(time == max(time))
+plot(patch_df$alpha_div, patch_df$N_total)
 
 # summarise the BEF quantities: Landscape scale
 land_df <- 
   raw_df |>
   dplyr::group_by(time) |>
   dplyr::filter(N > 0) |>
-  dplyr::summarise(N_total = sum(N),
+  dplyr::summarise(N_total = mean(N),
                    gamma_div = length(unique(species))) |>
   dplyr::ungroup() |>
   dplyr::filter(time == max(time))
-  
+print(land_df)  
 

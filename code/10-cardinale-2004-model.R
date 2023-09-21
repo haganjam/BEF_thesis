@@ -6,6 +6,8 @@
 #' relationship
 #'
 
+# new case where we just draw the K-values from a normal distribution
+
 # load relevant libraries
 library(dplyr)
 library(ggplot2)
@@ -38,9 +40,10 @@ print(exp(r))
 exp(mean(log((r))))
 
 # set the case:
-# 1 - partitioning between patches in a landscape
+# 1 - partitioning between patches in a landscape with different landscape types
 # 2 - partitioning within patches in a landscape
-case <- 2
+# 3 - no partitioning within patches in a landscape
+case <- 1
 
 # set the parameters
 if(case == 1) {
@@ -67,13 +70,15 @@ if(case == 1) {
   # set a to 1
   a <- 1
   
-} else {
+} else if (case == 2) {
   
   # set the carrying capacities to be equal
   K <- matrix(rep(200, N*P), nrow = P, ncol = N)
   
   # set alpha as either 1 or 0.2
   a <- c(0.2)
+  
+} else {
   
 }
 
