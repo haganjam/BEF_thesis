@@ -258,7 +258,7 @@
     },
     "class": {
       "Package": "class",
-      "Version": "7.3-21",
+      "Version": "7.3-22",
       "Source": "Repository",
       "Repository": "CRAN",
       "Requirements": [
@@ -267,7 +267,7 @@
         "stats",
         "utils"
       ],
-      "Hash": "8ae0d4328e2eb3a582dfd5391a3663b7"
+      "Hash": "f91f6b29f38b8c280f2b9477787d4bb2"
     },
     "cli": {
       "Package": "cli",

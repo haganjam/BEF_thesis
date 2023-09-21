@@ -17,7 +17,7 @@ source("code/helper-plotting-theme.R")
 N <- 20
 
 # set the number of landscapes
-L <- 2000
+L <- 600
 
 # get a vector with the different diversities for each landscape
 divT <- rep(seq(1:N), each = L/N)
@@ -34,14 +34,47 @@ print(exp(r))
 # check that the geometric mean is 0.2
 exp(mean(log((r))))
 
-# set the case:
-# 1 - partitioning between patches in a landscape
-# 2 - partitioning within patches in a landscape
-# 3 - no partioning within or between patches in a landscape
-case <- 1
+# set the case corresponding to Fig. 9
 
-# set the parameters
-if(case == 1) {
+# a - patch-scale, within patch niche partitioning
+# c - landscape-scale, within patch niche partitioning
+# b - patch-scale, no niche partitioning
+# d - landscape-scale, between patch niche partitioning
+case <- "d"
+
+if(case == "ac") {
+  
+  # how many patches?
+  P <- 20
+  
+  # set the carrying capacities to be equal
+  K <- matrix(rep(200, N*P), nrow = P, ncol = N)
+  
+  # set alpha to 0.2
+  a <- 0.2
+  
+} else if(case == "bd") {
+  
+  # how many patches
+  P <- 1
+  
+  # set the K parameters
+  Kmax <- 1000
+  sd <- 1.5
+  
+  # define the environment
+  env <- 1:N
+  
+  # define the patch specific K
+  K <- sapply(env, function(x) Kmax*(exp((1-( x ))/(2*(sd)))^2))
+  
+  # set the carrying capacities to be equal
+  K <- matrix(K, nrow = P, ncol = N)
+  
+  # set alpha to 1
+  a <- 1
+  
+} else if(case == "d") {
   
   # how many patches?
   P <- 20
@@ -65,38 +98,7 @@ if(case == 1) {
   # make sure the K is non-zero
   K[K == 0] <- 0.1
   
-  # set a to 1
-  a <- 1
-  
-} else if (case == 2) {
-  
-  # how many patches?
-  
-  # set the carrying capacities to be equal
-  K <- matrix(rep(200, N*P), nrow = P, ncol = N)
-  
-  # set alpha as either 1 or 0.2
-  a <- c(0.2)
-  
-} else if (case == 3) {
-  
-  # how many patches
-  P <- 1
-  
-  # set the K parameters
-  Kmax <- 1000
-  sd <- 1.5
-  
-  # define the environment
-  env <- 1:N
-  
-  # define the patch specific K
-  K <- sapply(env, function(x) Kmax*(exp((1-( x ))/(2*(sd)))^2))
-
-  # set the carrying capacities to be equal
-  K <- matrix(K, nrow = P, ncol = N)
-  
-  # set alpha as either 1 or 0.2
+  # set alpha to 1
   a <- 1
   
 }
@@ -172,116 +174,126 @@ for(l in 1:L) {
 lbi_df <- dplyr::bind_rows(lbi)
 head(lbi_df)
 
-# patch scale summary
-lbi_patch <- 
-  lbi_df |> 
-  dplyr::filter(time == t) |> 
-  dplyr::group_by(landscape, patch) |> 
-  dplyr::summarise(init_SR = first(init_SR),
-                   real_SR = sum(abundance > 0),
-                   total_abun = sum(abundance)) |> 
-  dplyr::ungroup()
-
-# get maximum monoculture
-pm <- max(lbi_patch[lbi_patch$init_SR == 1, ]$total_abun)
-
-# power function using nls()
-nlm1 <- nls(total_abun ~ a*(init_SR^b), data = lbi_patch, start = list(a = 1 , b = 2))
-
-# make a predicted dataset
-pred_patch <- data.frame(init_SR = seq(0.8, 20, 0.1))
-x <- investr::predFit(nlm1, pred_patch, interval = "confidence")
-pred_patch <- dplyr::bind_cols(pred_patch, x)
-
-# plot the BEF relationship at the patch scale
-y <- 
-  ggplot() +
-  geom_hline(yintercept = pm, linetype = "longdash") +
-  geom_jitter(data = lbi_patch,
-              mapping = aes(x = init_SR, y = total_abun),
-              colour = "red", alpha = 0.15, width = 0.2) +
-  geom_ribbon(data = pred_patch,
-              mapping = aes(x = init_SR, ymin = lwr, ymax = upr),
-              alpha = 0.2) +
-  geom_line(data = pred_patch,
-            mapping = aes(x = init_SR, y = fit)) +
-  xlab("Initial species richness") +
-  ylab("Total abundance") +
-  theme_meta()
-plot(y)
-
-# assign the plot object
-if(case == 1) {
-  assign("p1", y)
-} else {
-  assign("q1", y)
+# plot the local scale cases
+if(case %in% c("a", "b")) {
+  
+  # patch scale summary
+  lbi_patch <- 
+    lbi_df |> 
+    dplyr::group_by(landscape, patch) |> 
+    dplyr::summarise(init_SR = first(init_SR),
+                     real_SR = sum(abundance > 0),
+                     total_abun = sum(abundance)) |> 
+    dplyr::ungroup()
+  
+  # get maximum monoculture
+  pm <- max(lbi_patch[lbi_patch$init_SR == 1, ]$total_abun)
+  
+  # power function using nls()
+  nlm1 <- nls(total_abun ~ a*(init_SR^b), data = lbi_patch, start = list(a = 1 , b = 2))
+  
+  # make a predicted dataset
+  pred_patch <- data.frame(init_SR = seq(0.8, 20, 0.1))
+  x <- investr::predFit(nlm1, pred_patch, interval = "confidence")
+  pred_patch <- dplyr::bind_cols(pred_patch, x)
+  
+  # plot the BEF relationship at the patch scale
+  y <- 
+    ggplot() +
+    geom_hline(yintercept = pm, linetype = "longdash") +
+    geom_jitter(data = lbi_patch,
+                mapping = aes(x = init_SR, y = total_abun),
+                colour = "red", alpha = 0.15, width = 0.2) +
+    geom_ribbon(data = pred_patch,
+                mapping = aes(x = init_SR, ymin = lwr, ymax = upr),
+                alpha = 0.2) +
+    geom_line(data = pred_patch,
+              mapping = aes(x = init_SR, y = fit)) +
+    xlab("Initial species richness") +
+    ylab("Total abundance") +
+    theme_meta()
+  plot(y)
+  
+  # assign the plot object
+  if(case == "a") {
+    assign("a1", y)
+  } else {
+    assign("b1", y)
+  }
+  
 }
 
-# landscape scale summary
-lbi_land <- 
-  lbi_df |> 
-  dplyr::filter(time == t) |> 
-  dplyr::group_by(landscape, patch) |>
-  dplyr::summarise(init_SR = first(init_SR),
-                   real_SR = sum(abundance > 0),
-                   total_abun = sum(abundance)) |>
-  dplyr::group_by(landscape) |>
-  dplyr::summarise(init_SR = first(init_SR),
-                   real_SR_m = mean(real_SR),
-                   real_SR_sd = mean(real_SR),
-                   total_abun_m = mean(total_abun),
-                   total_abun_sd = sd(total_abun)
-  ) |>
-  dplyr::ungroup()
-
-# power function using nls()
-nlm2 <- nls(total_abun_m ~ a*(init_SR^b), data = lbi_land, start = list(a = 1 , b = 2))
-
-# make a predicted dataset
-pred_land <- data.frame(init_SR = seq(0.8, 20, 0.1))
-x <- investr::predFit(nlm2, pred_land, interval = "confidence")
-pred_land <- dplyr::bind_cols(pred_land, x)
-
-# get maximum monoculture
-lm <- max(lbi_land[lbi_land$init_SR == 1, ]$total_abun_m)
-
-# make a factor for plotting
-lbi_land$init_SR_f <- factor(lbi_land$init_SR) 
-
-# plot the BEF relationship at the landscape scale
-y <- 
-  ggplot() +
-  geom_hline(yintercept = lm, linetype = "longdash") +
-  geom_jitter(data = lbi_land,
-              mapping = aes(x = init_SR, y = total_abun_m), 
-              colour = "red", alpha = 0.25, size = 2, width = 0.2) +
-  geom_ribbon(data = pred_land,
-              mapping = aes(x = init_SR, ymin = lwr, ymax = upr),
-              alpha = 0.2) +
-  geom_line(data = pred_land,
-            mapping = aes(x = init_SR, y = fit)) +
-  xlab("Initial species richness") +
-  ylab("Total abundance") +
-  theme_meta()
-
-# assign the plot object
-if(case == 1) {
-  assign("p2", y)
-} else {
-  assign("q2", y)
+# plot the regional scale cases
+if(case %in% c("c", "d")) {
+  
+  # landscape scale summary
+  lbi_land <- 
+    lbi_df |> 
+    dplyr::group_by(landscape, patch) |>
+    dplyr::summarise(init_SR = first(init_SR),
+                     real_SR = sum(abundance > 0),
+                     total_abun = sum(abundance)) |>
+    dplyr::group_by(landscape) |>
+    dplyr::summarise(init_SR = first(init_SR),
+                     real_SR_m = mean(real_SR),
+                     real_SR_sd = mean(real_SR),
+                     total_abun_m = mean(total_abun),
+                     total_abun_sd = sd(total_abun)
+    ) |>
+    dplyr::ungroup()
+  
+  # power function using nls()
+  nlm2 <- nls(total_abun_m ~ a*(init_SR^b), data = lbi_land, start = list(a = 1 , b = 2))
+  
+  # make a predicted dataset
+  pred_land <- data.frame(init_SR = seq(0.8, 20, 0.1))
+  x <- investr::predFit(nlm2, pred_land, interval = "confidence")
+  pred_land <- dplyr::bind_cols(pred_land, x)
+  
+  # get maximum monoculture
+  lm <- max(lbi_land[lbi_land$init_SR == 1, ]$total_abun_m)
+  
+  # make a factor for plotting
+  lbi_land$init_SR_f <- factor(lbi_land$init_SR) 
+  
+  # plot the BEF relationship at the landscape scale
+  y <- 
+    ggplot() +
+    geom_hline(yintercept = lm, linetype = "longdash") +
+    geom_jitter(data = lbi_land,
+                mapping = aes(x = init_SR, y = total_abun_m), 
+                colour = "red", alpha = 0.25, size = 2, width = 0.2) +
+    geom_ribbon(data = pred_land,
+                mapping = aes(x = init_SR, ymin = lwr, ymax = upr),
+                alpha = 0.2) +
+    geom_line(data = pred_land,
+              mapping = aes(x = init_SR, y = fit)) +
+    xlab("Initial species richness") +
+    ylab("Total abundance") +
+    theme_meta()
+  plot(y)
+  
+  # assign the plot object
+  if(case == "c") {
+    assign("c1", y)
+  } else {
+    assign("d1", y)
+  }
+  
 }
 
-# sort out the axis labels
-p1 <- p1 + xlab(NULL) + ylab(NULL)
-p2 <- p2 + ylab(NULL)
 
 # sort out the axis labels
-q1 <- q1 + xlab(NULL)
-q2 <- q2
+a1 <- a1 + xlab(NULL)
+b1 <- b1 + xlab(NULL) + ylab(NULL)
+
+# sort out the axis labels
+c1 <- c1 
+d1 <- d1 + ylab(NULL)
 
 # arrange the plot
 pq <-
-  cowplot::plot_grid(q1, p1, q2, p2, align = c("hv"),
+  cowplot::plot_grid(a1, b1, c1, d1, align = c("hv"),
                      nrow = 2, ncol = 2, 
                      labels = c("a", "b", "c", "d"), label_size = 11,
                      label_fontface = "plain",
