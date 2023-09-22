@@ -42,7 +42,7 @@ exp(mean(log((r))))
 # d - landscape-scale, between patch niche partitioning
 
 # set ac or bd
-case <- "bd"
+case <- "ac"
 
 if(case == "ac") {
   
@@ -257,7 +257,7 @@ y <-
 plot(y)
 
 # assign the plot object
-if(case == "c") {
+if(case == "ac") {
   assign("c1", y)
 } else {
   assign("d1", y)
