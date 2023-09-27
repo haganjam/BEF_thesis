@@ -8,4 +8,12 @@ theme_meta <-
           legend.key = element_rect(fill = NA))
   }
 
+# get the equation from the model object (m) i.e. lm1
+# function to do this
+lm_eqn <- function(m){
+  eq <- substitute(italic(r)^2~"="~r2,
+                   list(r2 = format(summary(m)$r.squared, digits = 2)))
+  as.character(as.expression(eq))
+}
+
 ### END

@@ -103,6 +103,9 @@ for(i in 1:length(funcs)) {
     dplyr::filter(con_uncon == "uncon") |> 
     dplyr::filter(function_id == funcs[i])
   
+  # fit the model
+  lm1 <- lm(function_value ~ log_diversity, data = df_plot)
+  
   # plot the data
   p1 <- 
     ggplot(data = df_plot,
@@ -112,6 +115,8 @@ for(i in 1:length(funcs)) {
     ggtitle(titles[i]) +
     ylab(ylabs[i]) +
     xlab(xlabs[i]) +
+    annotate("text", x = Inf, y = -Inf, hjust = 1.1, vjust = -1.4,
+             label = lm_eqn(lm1), parse = TRUE) +
     theme_meta()
   
   uncon_plots[[i]] <- p1
@@ -140,6 +145,9 @@ for(i in 1:length(funcs)) {
     dplyr::filter(con_uncon == "con") |> 
     dplyr::filter(function_id == funcs[i])
   
+  # fit the model
+  lm1 <- lm(function_value ~ log_diversity, data = df_plot)
+  
   # plot the data
   p1 <- 
     ggplot(data = df_plot,
@@ -148,6 +156,8 @@ for(i in 1:length(funcs)) {
     geom_smooth(method = "lm", colour = "blue") +
     ylab(ylabs[i]) +
     xlab(xlabs[i]) +
+    annotate("text", x = Inf, y = -Inf, hjust = 1.1, vjust = -1.4,
+             label = lm_eqn(lm1), parse = TRUE) +
     ggtitle(titles[i]) +
     theme_meta()
   
