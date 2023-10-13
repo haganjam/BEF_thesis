@@ -36,18 +36,21 @@ df1 <- as_tibble(df1)
 p1 <- 
   ggplot() +
   geom_point(data = df1, 
-             mapping = aes(x = SR, y = Prod), colour = "red", size = 2) +
-  geom_line(mapping = aes(x = SR, y = Prod), colour = "red") + 
+             mapping = aes(x = SR, y = Prod), colour = "black", size = 1.5) +
+  geom_line(mapping = aes(x = SR, y = Prod), colour = "black", size = 0.5) + 
   scale_x_continuous(limits = c(0.9, 3.1), breaks = c(1:3)) +
   scale_y_continuous(limits = c(1.2, 1.8)) +
   ylab("Ecosystem function (T = 1)") +
   xlab("Species richness (T = 0)") +
   theme_meta() +
   theme(axis.text.y = element_text(size = 2.5, colour = "white"),
-        axis.ticks.y = element_blank())
+        axis.text.x = element_text(size = 7.5),
+        axis.ticks.y = element_blank(),
+        axis.title.x = element_text(size = 8),
+        axis.title.y = element_text(size = 8))
 plot(p1)
 
-ggsave("figures-tables/fig_4a.svg", p1,
+ggsave("figures-tables/fig_4a.pdf", p1,
        unit = "cm", width = 6.5, height = 5.75)
 
 # Experimental design 2
@@ -67,18 +70,21 @@ df2 <- as_tibble(df2)
 p2 <- 
   ggplot() +
   geom_point(data = df2, 
-             mapping = aes(x = SR, y = Prod), colour = "red", size = 2) +
-  geom_line(mapping = aes(x = SR, y = Prod), colour = "red") + 
+             mapping = aes(x = SR, y = Prod), colour = "black", size = 1.5) +
+  geom_line(mapping = aes(x = SR, y = Prod), colour = "black", size = 0.5) + 
   scale_x_continuous(limits = c(0.9, 3.1), breaks = c(1:3)) +
   scale_y_continuous(limits = c(1.2, 1.9)) +
   ylab("Ecosystem function (T = 1)") +
   xlab("Species richness (T = 0)") +
   theme_meta() +
   theme(axis.text.y = element_text(size = 2.5, colour = "white"),
-        axis.ticks.y = element_blank())
+        axis.text.x = element_text(size = 7.5),
+        axis.ticks.y = element_blank(), 
+        axis.title.x = element_text(size = 8),
+        axis.title.y = element_text(size = 8))
 plot(p2)
 
-ggsave("figures-tables/fig_4b.svg", p2,
+ggsave("figures-tables/fig_4b.pdf", p2,
        unit = "cm", width = 6.5, height = 5.75)
 
 ### END

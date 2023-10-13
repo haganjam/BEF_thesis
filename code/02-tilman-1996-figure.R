@@ -27,8 +27,6 @@ print(til_dat1)
 til_dat1$species_richness <- round(til_dat1$species_richness, 0)
 print(til_dat1)
 
-# convert the 
-
 # get the data into the correct format
 til_dat1$stat <- rep(c("CI_upp", "mean", "CI_low"), length(unique(til_dat1$species_richness)))
 
@@ -49,14 +47,15 @@ plot(x, y)
 p1 <- 
   ggplot() +
   geom_point(data = til_dat1,
-             mapping = aes(x = species_richness, y = mean), size = 2, colour = "red") +
+             mapping = aes(x = species_richness, y = mean), size = 2, colour =  "#118176") +
   geom_line(data = til_dat1_curve, 
-            mapping = aes(x = species_richness, y = mean), colour = "red") +
+            mapping = aes(x = species_richness, y = mean), colour =  "#118176", 
+            size = 0.5) +
   geom_errorbar(data = til_dat1,
                 mapping = aes(x = species_richness, ymin = CI_low, ymax = CI_upp),
-                width = 0, colour = "red") +
+                width = 0, colour =  "#118176") +
   scale_x_continuous(breaks = c(1, 2, 4, 6, 8, 12, 24 )) +
-  annotate(geom = "text", x = 22, y = 32, label = bquote(r^2~" = "~0.18 ), size = 3) +
+  annotate(geom = "text", x = 22, y = 32, label = bquote(italic(r)^2~"="~0.18 ), size = 4) +
   xlab("Species richness treatment") +
   ylab("Plant cover (%)") +
   theme_meta()
@@ -94,15 +93,16 @@ plot(x, y)
 p2 <- 
   ggplot() +
   geom_point(data = til_dat2,
-             mapping = aes(x = species_richness, y = mean), colour = "red",
+             mapping = aes(x = species_richness, y = mean), colour = "#118176",
              size = 2) +
   geom_line(data = til_dat2_curve, 
-            mapping = aes(x = species_richness, y = mean), colour = "red") +
+            mapping = aes(x = species_richness, y = mean), colour = "#118176",
+            size = 0.5) +
   geom_errorbar(data = til_dat2,
                 mapping = aes(x = species_richness, ymin = CI_low, ymax = CI_upp),
-                width = 0, colour = "red") +
+                width = 0, colour = "#118176") +
   scale_x_continuous(breaks = c(1, 2, 4, 6, 8, 12, 24 )) +
-  annotate(geom = "text", x = 22, y = 0.37, label = bquote(r^2~" = "~0.22 ), size = 3) +
+  annotate(geom = "text", x = 22, y = 0.37, label = bquote(italic(r)^2~"="~0.22 ), size = 4) +
   xlab("Species richness treatment") +
   ylab(expression(NO[3]~"mg"~kg^{-1})) +
   theme_meta()
@@ -114,7 +114,7 @@ p12 <-
           widths = c(1, 1.1))
 plot(p12)
 
-ggsave(filename = "figures-tables/fig_3.svg", plot = p12,
+ggsave(filename = "figures-tables/fig_3.pdf", plot = p12,
        unit = "cm", width = 20, height = 7.5)
 
 ### END
