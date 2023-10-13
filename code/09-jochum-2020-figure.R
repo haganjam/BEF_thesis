@@ -110,8 +110,9 @@ for(i in 1:length(funcs)) {
   p1 <- 
     ggplot(data = df_plot,
          mapping = aes(x = log_diversity, y = function_value)) +
-    geom_point(size = 2, shape = 1, colour = "red") +
-    geom_smooth(method = "lm", colour = "red") +
+    geom_point(size = 1.75, colour = "#C9795B") +
+    geom_smooth(method = "lm", colour = "#C9795B", fill = "#C9795B", alpha = 0.05,
+                size = 0.5) +
     ggtitle(titles[i]) +
     ylab(ylabs[i]) +
     xlab(xlabs[i]) +
@@ -152,8 +153,9 @@ for(i in 1:length(funcs)) {
   p1 <- 
     ggplot(data = df_plot,
            mapping = aes(x = log_diversity, y = function_value)) +
-    geom_point(size = 2, shape = 1, colour = "blue") +
-    geom_smooth(method = "lm", colour = "blue") +
+    geom_point(size = 1.75, colour = "#5685C1") +
+    geom_smooth(method = "lm", colour = "#5685C1", fill = "#5685C1", alpha = 0.05,
+                size = 0.5) +
     ylab(ylabs[i]) +
     xlab(xlabs[i]) +
     annotate("text", x = Inf, y = -Inf, hjust = 1.1, vjust = -1.4,
@@ -176,6 +178,6 @@ q2 <-
 q12 <- cowplot::plot_grid(q1, q2, nrow = 2, ncol = 1)
 
 ggsave(filename = "figures-tables/fig_8.pdf", plot = q12,
-       unit = "cm", width = 20, height = 14)
+       unit = "cm", width = 20, height = 15)
 
 ### END

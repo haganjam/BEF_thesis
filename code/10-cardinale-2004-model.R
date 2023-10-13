@@ -42,7 +42,7 @@ exp(mean(log((r))))
 # d - landscape-scale, between patch niche partitioning
 
 # set ac or bd
-case <- "ac"
+case <- "bd"
 
 if(case == "ac") {
   
@@ -185,12 +185,12 @@ y <-
   geom_hline(yintercept = pm, linetype = "longdash") +
   geom_jitter(data = lbi_patch,
               mapping = aes(x = init_SR, y = total_abun),
-              colour = "red", alpha = 0.15, width = 0.2) +
+              colour = "#118176", alpha = 0.15, width = 0.2) +
   geom_ribbon(data = pred_patch,
               mapping = aes(x = init_SR, ymin = lwr, ymax = upr),
-              alpha = 0.2) +
+              alpha = 0.05, fill = "#118176") +
   geom_line(data = pred_patch,
-            mapping = aes(x = init_SR, y = fit)) +
+            mapping = aes(x = init_SR, y = fit), size = 0.5, colour = "#118176") +
   xlab("Initial species richness") +
   ylab("Community biomass") +
   theme_meta()
@@ -245,12 +245,12 @@ y <-
   geom_hline(yintercept = lm, linetype = "longdash") +
   geom_jitter(data = lbi_land,
               mapping = aes(x = init_SR, y = total_abun_m), 
-              colour = "red", alpha = 0.25, size = 2, width = 0.2) +
+              colour = "#118176", alpha = 0.25, size = 2, width = 0.2) +
   geom_ribbon(data = pred_land,
               mapping = aes(x = init_SR, ymin = lwr, ymax = upr),
-              alpha = 0.2) +
+              alpha = 0.05, fill = "#118176") +
   geom_line(data = pred_land,
-            mapping = aes(x = init_SR, y = fit)) +
+            mapping = aes(x = init_SR, y = fit), colour = "#118176", size = 0.5) +
   xlab("Initial species richness") +
   ylab("Community biomass") +
   theme_meta()
