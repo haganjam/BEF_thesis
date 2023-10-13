@@ -113,16 +113,16 @@ p1 <-
   ggplot() +
   geom_jitter(data = df_plot1,
               mapping = aes(x = SR, y = EF, group = ID, colour = `Transgressive overyielding`), 
-              width = 0.025, alpha = 0.5) +
+              width = 0.01, alpha = 9, shape = 16, size = 1.5) +
   geom_smooth(data = df_plot1,
               mapping = aes(x = SR, y = EF, group = ID, colour = `Transgressive overyielding`),
-              method = "lm", se = FALSE, size = 0.2) +
+              method = "lm", se = FALSE, size = 0.25) +
   ylab("Abundance") +
   xlab("Species richness") +
   theme_meta() +
   scale_x_continuous(breaks = c(1, 2), limits = c(0.9, 2.1)) +
   scale_y_continuous(limits = c(0.3, 4.1)) +
-  scale_colour_viridis_d(option = "C", begin = 0, end = 0.8, alpha = 0.85) +
+  scale_colour_manual(values = col_func()[4:5]) +
   theme(legend.position = "top",
         legend.key=element_blank())
 plot(p1)
@@ -137,17 +137,17 @@ p2 <-
   ggplot() +
   geom_jitter(data = df_plot2,
               mapping = aes(x = SR, y = EF, group = ID, colour = `Transgressive overyielding`), 
-              width = 0.025, alpha = 0.5) +
+              width = 0.01, alpha = 9, shape = 16, size = 1.5) +
   geom_smooth(data = df_plot2,
               mapping = aes(x = SR, y = EF, group = ID, colour = `Transgressive overyielding`),
-              method = "lm", se = FALSE, size = 0.2) +
+              method = "lm", se = FALSE, size = 0.25) +
   guides(color=guide_legend(override.aes=list(colour=NA))) +
   ylab("Abundance") +
   xlab("Species richness") +
   theme_meta() +
   scale_x_continuous(breaks = c(1, 2), limits = c(0.9, 2.1)) +
   scale_y_continuous(limits = c(0.3, 4.1)) +
-  scale_colour_viridis_d(option = "C", begin = 0, end = 0.8, alpha = 0.85) +
+  scale_colour_manual(values = col_func()[4:5]) +
   theme(legend.position = "top") +
   theme(legend.position = "top",
         legend.key=element_blank())
@@ -156,7 +156,7 @@ plot(p2)
 p12 <- ggarrange(p1, p2, common.legend = TRUE, labels = c("a", "b"),
                  font.label = list(size = 11, face = "plain"))
 
-ggsave(filename = "figures-tables/fig_7.svg", plot = p12,
-       unit = "cm", width = 20, height = 9.5)
+ggsave(filename = "figures-tables/fig_7.pdf", plot = p12,
+       unit = "cm", width = 19, height = 10.5)
 
 ### END

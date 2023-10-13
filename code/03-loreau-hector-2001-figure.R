@@ -23,15 +23,15 @@ p1 <-
   geom_bar(data = tst1[[2]],
            mapping = aes(x = mixture, y = yield, fill = species), 
            position = "stack", stat = "identity", width = 0.3,
-           colour = "black") +
+           colour = "black", alpha = 0.9) +
   xlab("") +
-  scale_fill_viridis_d(option = "C", begin = 0, end = 0.8, alpha = 0.85) +
+  scale_fill_manual(values = col_func()[c(1,3)]) +
   ylab("Ecosystem function") +
   geom_segment(data = tst1[[3]],
                mapping = aes(x = as.numeric(xstart)-0.5, xend = as.numeric(xend)-0.5,
                              y = ystart, yend = yend),
-               colour = "red", size = 1 ) +
-  annotate(x = 3.5, y = 525, geom = "text", label = "NBE", colour = "red") +
+               colour = "black", size = 1 ) +
+  annotate(x = 3.5, y = 525, geom = "text", label = "NBE", colour = "black") +
   theme_meta()+
   scale_y_continuous(limits = c(0, 615)) +
   theme(legend.position = "none")
@@ -48,15 +48,15 @@ p2 <-
   geom_bar(data = tst2[[2]],
            mapping = aes(x = mixture, y = yield, fill = species), 
            position = "stack", stat = "identity", width = 0.3,
-           colour = "black") +
+           colour = "black", alpha = 0.9) +
   xlab("") +
-  scale_fill_viridis_d(option = "C", begin = 0, end = 0.8, alpha = 0.85) +
+  scale_fill_manual(values = col_func()[c(1, 3)]) +
   ylab("Ecosystem function") +
   geom_segment(data = tst2[[3]],
                mapping = aes(x = as.numeric(xstart)-0.5, xend = as.numeric(xend)-0.5,
                              y = ystart, yend = yend),
-               colour = "red", size = 1 ) +
-  annotate(x = 3.5, y = 525, geom = "text", label = "NBE", colour = "red") +
+               colour = "black", size = 1 ) +
+  annotate(x = 3.5, y = 525, geom = "text", label = "NBE", colour = "black") +
   theme_meta()+
   scale_y_continuous(limits = c(0, 615)) +
   theme(legend.position = "none")
@@ -73,15 +73,15 @@ p3 <-
   geom_bar(data = tst3[[2]],
            mapping = aes(x = mixture, y = yield, fill = species), 
            position = "stack", stat = "identity", width = 0.3,
-           colour = "black") +
+           colour = "black", alpha = 0.9) +
   xlab("") +
-  scale_fill_viridis_d(option = "C", begin = 0, end = 0.8, alpha = 0.85) +
+  scale_fill_manual(values = col_func()[c(1, 3)]) +
   ylab("Ecosystem function") +
   geom_segment(data = tst3[[3]],
                mapping = aes(x = as.numeric(xstart)-0.5, xend = as.numeric(xend)-0.5,
                              y = ystart, yend = yend),
-               colour = "red", size = 1 ) +
-  annotate(x = 3.5, y = 615, geom = "text", label = "NBE", colour = "red") +
+               colour = "black", size = 1 ) +
+  annotate(x = 3.5, y = 580, geom = "text", label = "NBE", colour = "black") +
   theme_meta()+
   scale_y_continuous(limits = c(0, 615)) +
   theme(legend.position = "none")
@@ -106,8 +106,8 @@ pt <-
 p4 <- 
   ggplot(data = pt,
        mapping = aes(x = sample, y = value, fill = effect)) +
-  geom_bar(stat = "identity", width = 0.3, colour = "black") +
-  scale_fill_viridis_d(option = "F", begin = 0, end = 0.8, alpha = 0.85) +
+  geom_bar(stat = "identity", width = 0.3, colour = "black", alpha = 0.9) +
+  scale_fill_manual(values = col_func()[4:5]) +
   theme_meta() +
   ylab("Net biodiversity effect") +
   xlab("") +
@@ -119,7 +119,7 @@ p1234 <- ggarrange(p1, p2, p3, p4, labels = c("a", "b", "c", "d"),
                    font.label = list(size = 11, face = "plain"))
 plot(p1234)
 
-ggsave(filename = "figures-tables/fig_5.svg", plot = p1234,
-       unit = "cm", width = 20, height = 16)
+ggsave(filename = "figures-tables/fig_5.pdf", plot = p1234,
+       unit = "cm", width = 20, height = 15)
 
 ### END

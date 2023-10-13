@@ -36,10 +36,10 @@ summary(sch_dat)
 p1 <- 
   ggplot() +
   geom_point(data = sch_dat, 
-             mapping = aes(x = prod, y = div_raw), size = 2, shape = 1, colour = "red") +
+             mapping = aes(x = prod, y = div_raw), size = 2, colour = "#118176") +
   geom_line(data = sch_dat,
             mapping = aes(x = prod, y = div), 
-            size = 0.75,colour = "red", linetype = "dashed") +
+            size = 0.75,colour = "#118176", linetype = "dashed") +
   ylab("Species richness") +
   xlab("Productivity") +
   scale_y_continuous(limits = c(0, 14.5)) +
@@ -65,16 +65,16 @@ p2 <-
   ggplot() +
   geom_line(data = sch_dat,
             mapping = aes(x = prod, y = div), 
-            size = 0.75,colour = "red", linetype = "dashed") +
+            size = 0.75,colour = "#118176", linetype = "dashed") +
   geom_line(data = dfA,
-            mapping = aes(x = prod, y = div), colour = "red") +
+            mapping = aes(x = prod, y = div), colour = "#118176") +
   geom_line(data = dfB,
-            mapping = aes(x = prod, y = div), colour = "red") +
+            mapping = aes(x = prod, y = div), colour = "#118176") +
   geom_point(data = dfAB, 
-             mapping = aes(x = prod, y = div), size = 3, colour = "red") +
+             mapping = aes(x = prod, y = div), size = 3, colour = "#118176") +
   geom_text(data = dfAB, 
              mapping = aes(x = prod, y = div, label = point), size =4,
-             nudge_y = 0.65, nudge_x = 0.5, colour = "red") +
+             nudge_y = 0.65, nudge_x = 0.5, colour = "#118176") +
   scale_y_continuous(limits = c(0, 14.5)) +
   ylab("Species richness") +
   xlab("Productivity") +
@@ -89,8 +89,9 @@ p12 <-
             labels = c("a", "b"),
             font.label = list(size = 11, face = "plain")
             )
+plot(p12)
 
-ggsave(filename = "figures-tables/fig_6.svg", plot = p12,
+ggsave(filename = "figures-tables/fig_6.pdf", plot = p12,
        unit = "cm", width = 17, height = 7.5)
 
 ### END
