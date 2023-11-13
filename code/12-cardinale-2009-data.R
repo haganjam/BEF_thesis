@@ -38,8 +38,25 @@ qiu_part <-
 # get non-nas
 qiu_part <- qiu_part[complete.cases(qiu_part[,c(5, 7)]),]
 
+# remove extreme protist example
+qiu_part <- 
+  qiu_part |>
+  dplyr::filter(SE < 1000, SE > -1000 )|>
+  dplyr::filter(CE < 1000, CE > -1000 )
+
 # plot the results
-ggplot(data = qiu_part)
+summary(qiu_part)
+ggplot(data = qiu_part,
+       mapping = aes(x = SE, y = CE)) +
+  geom_point() +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed") +
+  geom_hline(yintercept = 0) +
+  geom_vline(xintercept = 0) +
+  scale_x_continuous(limits = c(-435, 650)) +
+  scale_y_continuous(limits = c(-435, 650)) +
+  ylab("Complementarity Effect") +
+  xlab("Selection Effect") +
+  theme_meta()
 
 
 
