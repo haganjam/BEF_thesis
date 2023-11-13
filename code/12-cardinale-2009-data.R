@@ -46,17 +46,52 @@ qiu_part <-
 
 # plot the results
 summary(qiu_part)
-ggplot(data = qiu_part,
-       mapping = aes(x = SE, y = CE)) +
-  geom_point() +
+
+# get the mean and sd
+msd <- 
+  qiu_part |>
+  dplyr::summarise(SE_m = mean(SE),
+                   SE_sd = sd(SE),
+                   CE_m = mean(CE),
+                   CE_sd = sd(CE))
+
+p1 <- 
+  ggplot() +
   geom_abline(intercept = 0, slope = 1, linetype = "dashed") +
   geom_hline(yintercept = 0) +
   geom_vline(xintercept = 0) +
-  scale_x_continuous(limits = c(-435, 650)) +
-  scale_y_continuous(limits = c(-435, 650)) +
+  geom_point(data = qiu_part,
+             mapping = aes(x = SE, y = CE), 
+             shape = 1, alpha = 0.3) +
+  geom_errorbar(data = qiu_part, 
+                mapping = aes(x = SE, ymin = CE-SDCE, ymax = CE+SDCE),
+                size = 0.2, alpha = 0.3) +
+  geom_errorbarh(data = qiu_part, 
+                 mapping = aes(y = CE,xmin = SE-SDSE, xmax = SE+SDSE),
+                 size = 0.2, alpha = 0.3) +
+  geom_errorbar(data = msd,
+                mapping = aes(x = SE_m, ymin = CE_m-CE_sd, ymax = CE_m+CE_sd),
+                size = 0.5, alpha = 1, colour = "red") +
+  geom_errorbarh(data = msd,
+                 mapping = aes(y = CE_m, xmin = SE_m-SE_sd, xmax = SE_m+SE_sd),
+                 size = 0.5, alpha = 1, colour = "red") +
+  geom_point(data = msd,
+             mapping = aes(x = SE_m, y = CE_m), colour = "red", shape = 23, size = 3.5,
+             fill = "white", stroke = 0.75) +
+  scale_x_continuous(limits = c(-500, 900), breaks = seq(-500, 900, 250)) +
+  scale_y_continuous(limits = c(-500, 900), breaks = seq(-500, 900, 250)) +
   ylab("Complementarity Effect") +
   xlab("Selection Effect") +
   theme_meta()
+plot(p1)
+
+# how many estimates?
+nrow(qiu_part)
+length(unique(qiu_part$Study))
+
+# export the figure for further modification
+ggsave(filename = "figures-tables/def_fig_3.pdf", p1,
+       unit = "cm", width = 10, height = 8)
 
 
 
