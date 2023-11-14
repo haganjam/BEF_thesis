@@ -25,7 +25,7 @@ qiu <- readr::read_csv(url("https://esapubs.org/archive/ecol/E090/060/BEF_summar
 spec(qiu)
 
 # view the data
-View(qiu)
+# View(qiu)
 
 # subset out the relevant data points
 names(qiu)
@@ -77,12 +77,20 @@ p1 <-
                  size = 0.5, alpha = 1, colour = "red") +
   geom_point(data = msd,
              mapping = aes(x = SE_m, y = CE_m), colour = "red", shape = 23, size = 3.5,
-             fill = "white", stroke = 0.75) +
+             fill = "red", stroke = 0.75) +
   scale_x_continuous(limits = c(-500, 900), breaks = seq(-500, 900, 250)) +
   scale_y_continuous(limits = c(-500, 900), breaks = seq(-500, 900, 250)) +
   ylab("Complementarity Effect") +
   xlab("Selection Effect") +
-  theme_meta()
+  theme_meta() +
+  theme(
+    panel.background = element_rect(fill='transparent'), #transparent panel bg
+    plot.background = element_rect(fill='transparent', color=NA), #transparent plot bg
+    panel.grid.major = element_blank(), #remove major gridlines
+    panel.grid.minor = element_blank(), #remove minor gridlines
+    legend.background = element_rect(fill='transparent'), #transparent legend bg
+    legend.box.background = element_rect(fill='transparent') #transparent legend panel
+  )
 plot(p1)
 
 # how many estimates?
@@ -91,8 +99,6 @@ length(unique(qiu_part$Study))
 
 # export the figure for further modification
 ggsave(filename = "figures-tables/def_fig_3.pdf", p1,
-       unit = "cm", width = 10, height = 8)
+       unit = "cm", width = 10, height = 8, bg = "transparent")
 
-
-
-
+### END
