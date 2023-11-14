@@ -44,6 +44,9 @@ exp(mean(log((r))))
 # set ac or bd
 case <- "bd"
 
+# plots for the defence or thesis
+defence <- TRUE
+
 if(case == "ac") {
   
   # how many patches?
@@ -196,6 +199,24 @@ y <-
   theme_meta()
 plot(y)
 
+# plot for the defence
+if(defence) {
+  yd1 <- 
+    ggplot() +
+    geom_hline(yintercept = pm, linetype = "longdash") +
+    geom_jitter(data = lbi_patch |> dplyr::group_by(init_SR) |> dplyr::sample_n(10),
+                mapping = aes(x = init_SR, y = total_abun),
+                colour = "#118176", alpha = 1, width = 0.2) +
+    geom_ribbon(data = pred_patch,
+                mapping = aes(x = init_SR, ymin = lwr, ymax = upr),
+                alpha = 0.05, fill = "#118176") +
+    geom_line(data = pred_patch,
+              mapping = aes(x = init_SR, y = fit), size = 0.5, colour = "#118176") +
+    xlab("Initial species richness") +
+    ylab("Community biomass") +
+    theme_meta()
+}
+
 # assign the plot object
 if(case == "ac") {
   assign("a1", y)
@@ -255,6 +276,31 @@ y <-
   ylab("Community biomass") +
   theme_meta()
 plot(y)
+
+# make a plot for the defence
+if(defence){
+  yd2 <- 
+  ggplot() +
+  geom_hline(yintercept = lm, linetype = "longdash") +
+  geom_jitter(data = lbi_land |> dplyr::group_by(init_SR) |> dplyr::sample_n(10),
+              mapping = aes(x = init_SR, y = total_abun_m), 
+              colour = "#118176", alpha = 0.25, size = 2, width = 0.2) +
+  geom_ribbon(data = pred_land,
+              mapping = aes(x = init_SR, ymin = lwr, ymax = upr),
+              alpha = 0.05, fill = "#118176") +
+  geom_line(data = pred_land,
+            mapping = aes(x = init_SR, y = fit), colour = "#118176", size = 0.5) +
+  xlab("Initial species richness") +
+  ylab("Community biomass") +
+  theme_meta()
+}
+
+# combine the plots for the defence and export
+if(defence){
+  yd <- cowplot::plot_grid(yd1,yd2, align = c("hv"))
+  ggsave(filename = "figures-tables/def_fig_4.pdf", yd,
+         unit = "cm", width = 20, height = 9)
+}
 
 # assign the plot object
 if(case == "ac") {
