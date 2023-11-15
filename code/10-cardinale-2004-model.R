@@ -214,7 +214,15 @@ if(defence) {
               mapping = aes(x = init_SR, y = fit), size = 0.5, colour = "#118176") +
     xlab("Initial species richness") +
     ylab("Community biomass") +
-    theme_meta()
+    theme_meta() +
+    theme(
+      panel.background = element_rect(fill='transparent'), #transparent panel bg
+      plot.background = element_rect(fill='transparent', color=NA), #transparent plot bg
+      panel.grid.major = element_blank(), #remove major gridlines
+      panel.grid.minor = element_blank(), #remove minor gridlines
+      legend.background = element_rect(fill='transparent'), #transparent legend bg
+      legend.box.background = element_rect(fill='transparent') #transparent legend panel
+    )
 }
 
 # assign the plot object
@@ -292,14 +300,22 @@ if(defence){
             mapping = aes(x = init_SR, y = fit), colour = "#118176", size = 0.5) +
   xlab("Initial species richness") +
   ylab("Community biomass") +
-  theme_meta()
+  theme_meta() +
+    theme(
+      panel.background = element_rect(fill='transparent'), #transparent panel bg
+      plot.background = element_rect(fill='transparent', color=NA), #transparent plot bg
+      panel.grid.major = element_blank(), #remove major gridlines
+      panel.grid.minor = element_blank(), #remove minor gridlines
+      legend.background = element_rect(fill='transparent'), #transparent legend bg
+      legend.box.background = element_rect(fill='transparent') #transparent legend panel
+    )
 }
 
 # combine the plots for the defence and export
 if(defence){
   yd <- cowplot::plot_grid(yd1,yd2, align = c("hv"))
   ggsave(filename = "figures-tables/def_fig_4.pdf", yd,
-         unit = "cm", width = 20, height = 9)
+         unit = "cm", width = 18, height = 7.5, bg = "transparent")
 }
 
 # assign the plot object
